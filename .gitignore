@@ -2,3 +2,9 @@
 __pycache__/
 *.pyc
 .DS_Store
+
+# Intermediate physical-data enrichment files
+data/processed/athlete_master.csv
+data/processed/athlete_master_enriched.csv
+data/processed/wikidata_physical_candidates.csv
+data/processed/wikidata_physical_checkpoint.csv

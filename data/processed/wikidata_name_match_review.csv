@@ -1,0 +1,17 @@
+swimmer_name,represented_country,wikidata_label,name_match_score,token_match_score,height_cm,weight_kg,match_type,improved_match
+VAN DEN HOOGENBAND Pieter,NED,Pieter van den Hoogenband,0.56,1.0,,,no_match,True
+LI Zhesi,CHN,Li Zhesi,0.625,1.0,,,no_match,True
+VAN WIJK Milou,NED,Milou van Wijk,0.643,1.0,,,no_match,True
+WU Qingfeng,CHN,Wu Qingfeng,0.727,1.0,,,no_match,True
+XU Yanwei,CHN,Xu Yanwei,0.667,1.0,,,no_match,True
+ZHU Yingwen,CHN,Zhu Yingwen,0.636,1.0,,,no_match,True
+RICHARDS Matthew,GBR,Matt Richards,0.897,0.896551724137931,,,review,False
+MEISSNER Katrin,GER,Katrin Meißner,0.897,0.896551724137931,187.0,80.0,review,False
+TARGETT Matthew,AUS,Matt Targett,0.889,0.8888888888888888,198.0,90.0,review,False
+POPOV Alexander,RUS,Aleksandr Popov,0.867,0.8666666666666667,197.0,87.0,review,False
+SCHOEMAN Roland,RSA,Roland Mark Schoeman,0.857,0.8571428571428571,190.0,84.0,review,False
+MEOLANS Jose,ARG,José Pepe Meolans,0.828,0.8275862068965517,195.0,94.0,review,False
+VELDHUIS Magdalena,NED,Marleen Veldhuis,0.824,0.8235294117647058,182.0,65.0,review,False
+WHITTLE Jacob Henry,GBR,Jacob Whittle,0.812,0.8125,,,review,False
+CIELO FILHO Cesar,BRA,César Cielo,0.786,0.7857142857142857,,,no_match,False
+BURRAS Lewis Edward,GBR,Lewis Burras,0.774,0.7741935483870968,,,no_match,False
