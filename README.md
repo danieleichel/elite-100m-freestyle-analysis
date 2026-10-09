@@ -45,7 +45,6 @@ Because many swimmers appear repeatedly across rounds and competitions, the stat
 
 The main pacing variable is second-half percentage dropoff:
 
-```text
 Dropoff (%) = ((Second 50m - First 50m) / First 50m) x 100
 A larger positive value indicates greater slowing during the second half of the race.
 Additional variables include:
@@ -151,6 +150,7 @@ Final physical-data coverage:
 - 242 validated Wikidata matches
 Physical characteristics should be interpreted cautiously because historical athlete profiles may not always represent measurements taken at the exact time of competition.
 ## Project Structure
+```text
 elite-100m-freestyle-analysis/
 |
 ├── data/
@@ -175,7 +175,7 @@ elite-100m-freestyle-analysis/
 ├── requirements.txt
 └── .gitignore
 
-## Reproducible Pipeline
+```## Reproducible Pipeline
 Run the main analysis in order:
 python src/01_collect_data.py
 python src/02_clean_data.py
