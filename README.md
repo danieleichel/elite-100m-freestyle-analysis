@@ -42,5 +42,5 @@ Because many swimmers appear multiple times across competitions and rounds, the 
 The main pacing measure is second-half dropoff:
 
 ```text
-Dropoff (%) = ((Second 50m - First 50m) / First 50m) × 100
-
+Dropoff (%) = ((Second 50m - First 50m) / First 50m) x 100
+EDF
