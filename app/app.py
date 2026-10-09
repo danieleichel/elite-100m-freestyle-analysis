@@ -1,4 +1,6 @@
 import sqlite3
+import subprocess
+import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -25,6 +27,27 @@ MECHANISM_FIGURE = (
     / "semifinal_final_mechanism.png"
 )
 
+DATABASE_BUILDER = (
+    PROJECT_ROOT
+    / "src"
+    / "07_build_database.py"
+)
+
+
+# ============================================================
+# BUILD DATABASE IF NEEDED
+# ============================================================
+
+if not DATABASE_FILE.exists():
+
+    subprocess.run(
+        [
+            sys.executable,
+            str(DATABASE_BUILDER)
+        ],
+        check=True,
+        cwd=PROJECT_ROOT
+    )
 
 # ============================================================
 # PAGE SETTINGS
