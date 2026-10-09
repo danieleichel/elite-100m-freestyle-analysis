@@ -40,3 +40,4 @@ src/26_main_results_figure.py
 src/27_bootstrap_paired_effect.py
 src/28_inspect_athlete_profiles.py
 src/29_test_person_profile_api.py
+data/swimming_analysis.db
