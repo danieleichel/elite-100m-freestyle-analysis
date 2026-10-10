@@ -1,10 +1,14 @@
 # Elite 100m Freestyle Performance Analysis
 
-A statistical analysis of elite men's and women's 100m freestyle swimming, focusing on pacing strategy, second-half speed deterioration, repeated athlete observations, semifinal-to-final changes, selected physical characteristics, and SQL-based exploration.
+## Live Dashboard
+
+Explore the interactive Streamlit dashboard:
+
+[Open the Elite 100m Freestyle Dashboard](https://elite-100m-freestyle.streamlit.app/)
 
 ## Project Overview
 
-This project analyzes elite 100m freestyle performances from major international long-course competitions from 2000 through 2025.
+This project analyzes elite men's and women's 100m freestyle performances from major international long-course competitions between 2000 and 2025.
 
 The analysis uses Python to collect, clean, validate, and analyze race-level data from the World Aquatics API.
 
@@ -28,6 +32,7 @@ The complete race database contains:
 
 - 2,767 men's race observations
 - 2,129 women's race observations
+- 4,896 total race observations
 - 1,167 unique male swimmers
 - 824 unique female swimmers
 
@@ -43,11 +48,29 @@ Because many swimmers appear repeatedly across rounds and competitions, the stat
 
 ## Key Variables
 
-The main pacing variable is second-half percentage dropoff:
+The project contains two closely related pacing measures.
 
-**Dropoff (%) = ((Second 50m - First 50m) / First 50m) x 100**
+### Second-Half Difference
 
-A larger positive value indicates greater slowing during the second half of the race.
+The interactive dashboard primarily uses:
+
+**Second-Half Difference (s) = Second 50 m - First 50 m**
+
+This represents how many seconds longer the swimmer took to complete the second 50 m compared with the first 50 m.
+
+For example, if the first 50 m is 23.00 seconds and the second 50 m is 25.10 seconds:
+
+**Second-Half Difference = 2.10 seconds**
+
+A larger value indicates greater slowing during the second half of the race.
+
+### Percentage Dropoff
+
+The primary statistical pacing models use percentage dropoff:
+
+**Dropoff (%) = ((Second 50 m - First 50 m) / First 50 m) x 100**
+
+This normalizes second-half slowing relative to the swimmer's first 50 m and is useful for statistical comparisons across athletes with different absolute swimming speeds.
 
 Additional variables include:
 
@@ -61,8 +84,6 @@ Additional variables include:
 - Athlete height
 - Athlete weight
 
-`dropoff_percent` is used as the primary pacing measure because alternative measures such as pacing ratio and absolute split difference are highly redundant with it.
-
 ## Main Findings
 
 ### 1. Semifinal-to-final pacing changes
@@ -71,52 +92,56 @@ Among swimmers who competed in both the semifinal and final of the same competit
 
 Men:
 
-- Semifinal mean dropoff: 8.80%
-- Final mean dropoff: 9.63%
+- Paired swimmers: 136
+- Semifinal mean percentage dropoff: 8.80%
+- Final mean percentage dropoff: 9.63%
 - Mean increase: 0.82 percentage points
 - Cohen's dz: 0.40
-- 67.6% of swimmers showed greater dropoff in the final
+- 67.6% of swimmers showed greater percentage dropoff in the final
 
 Women:
 
-- Semifinal mean dropoff: 7.11%
-- Final mean dropoff: 8.02%
+- Paired swimmers: 144
+- Semifinal mean percentage dropoff: 7.11%
+- Final mean percentage dropoff: 8.02%
 - Mean increase: 0.91 percentage points
 - Cohen's dz: 0.53
-- 70.1% of swimmers showed greater dropoff in the final
+- 70.1% of swimmers showed greater percentage dropoff in the final
 
 Bootstrap confidence intervals were fully above zero for both men and women.
 
 ### 2. Mechanism of the semifinal-to-final change
 
-The larger final-round dropoff appears to be driven primarily by a more aggressive opening 50 m.
+The larger final-round second-half difference appears to be associated primarily with a faster opening 50 m.
 
 Men:
 
 - First 50 m: 0.133 s faster in finals
 - Second 50 m: 0.043 s slower
 - Final time: 0.090 s faster overall
+- Second-Half Difference: 0.176 s larger
 
 Women:
 
 - First 50 m: 0.164 s faster in finals
 - Second 50 m: 0.059 s slower
 - Final time: 0.105 s faster overall
+- Second-Half Difference: 0.223 s larger
 
-This pattern suggests that swimmers reach the final and swim faster overall, but do so partly by increasing first-half speed and accepting greater second-half deterioration.
+This pattern indicates that swimmers generally produce faster overall final performances while opening more aggressively and slowing more during the second half relative to the first half.
 
 These are observational associations and should not be interpreted as causal effects.
 
 ### 3. Long-term pacing trends
 
-Simple OLS models suggested a decline in male dropoff over time, but this association weakened after accounting for repeated observations from the same swimmer.
+Simple OLS models suggested a decline in male percentage dropoff over time, but this association weakened after accounting for repeated observations from the same swimmer.
 
 Population-average GEE models found:
 
 - Men: no statistically significant long-term pacing trend
 - Women: no statistically significant long-term pacing trend
 
-This indicates that apparent time trends can be sensitive to the statistical treatment of repeated athlete observations.
+This demonstrates why repeated-measures modeling is important when the same athletes appear many times in the dataset.
 
 ### 4. Height and performance
 
@@ -139,7 +164,7 @@ Women:
 - Greater height was associated with faster final times
 - Greater height was especially associated with faster second 50 m performance
 
-Formal height-by-sex interaction tests were significant for:
+Formal height-by-sex interaction tests were statistically significant for:
 
 - Final time
 - Second 50 m
@@ -151,6 +176,27 @@ No significant interaction was detected for:
 
 These findings are observational and may be affected by incomplete historical physical-data coverage and residual confounding.
 
+## Statistical Highlights
+
+The project goes beyond descriptive analysis and applies inferential and repeated-measures methods to elite swimming performance.
+
+Key statistical components include:
+
+- Paired semifinal-to-final analysis using paired t-tests
+- Wilcoxon signed-rank robustness tests
+- Bootstrap confidence intervals
+- Cohen's dz effect sizes
+- OLS regression
+- Cluster-robust standard errors
+- Mixed-effects models
+- Generalized Estimating Equations (GEE)
+- Height-by-sex interaction models
+- Missing-data diagnostics
+
+The primary paired analysis found that second-half pacing deterioration increased significantly from semifinal to final for both men and women.
+
+Repeated-measures methods were required because many swimmers appear multiple times across competitions and race rounds.
+
 ## Statistical Methods
 
 The project uses:
@@ -160,6 +206,7 @@ The project uses:
 - Paired t-tests
 - Wilcoxon signed-rank tests
 - Bootstrap confidence intervals
+- Cohen's dz effect sizes
 - OLS regression
 - Cluster-robust standard errors
 - Mixed-effects models
@@ -217,8 +264,8 @@ The database contains:
 
 Example SQL analyses include:
 
-- Average pacing dropoff by sex and round
-- Average final time by sex and round
+- Average pacing by sex and race round
+- Average final time by sex and race round
 - Fastest elite performances
 - Swimmers with the most elite race observations
 - Year-by-year pacing summaries
@@ -228,14 +275,43 @@ The SQL queries are stored in:
 
 `sql/analysis_queries.sql`
 
-The SQLite database is generated locally using:
+The SQLite database is generated using:
 
 `src/07_build_database.py`
+
+The Streamlit app automatically builds the database if it is not already available.
+
+## Interactive Dashboard
+
+The Streamlit dashboard provides an interactive presentation layer on top of the Python and SQL analysis.
+
+It includes:
+
+- Overview of elite performance
+- Sex and year filters
+- Semifinal and final comparisons
+- First 50 m and second 50 m summaries
+- Second-Half Difference analysis
+- Fastest elite performances
+- Performance trends over time
+- Paired semifinal-to-final visualizations
+- Athlete-level exploration
+- Physical-characteristic analysis
+- Dedicated inferential statistical analysis
+- GEE, interaction, bootstrap, effect-size, and paired-test results
+
+Live dashboard:
+
+[https://elite-100m-freestyle.streamlit.app/](https://elite-100m-freestyle.streamlit.app/)
 
 ## Project Structure
 
 ```text
 elite-100m-freestyle-analysis/
+|
+├── app/
+│   ├── app.py
+│   └── statistical_analysis.py
 |
 ├── data/
 │   ├── raw/
@@ -270,20 +346,30 @@ python src/02_clean_data.py
 python src/03_build_analysis_sample.py
 python src/04_descriptive_analysis.py
 python src/05_pacing_models.py
-python src/06_semifinal_final_analysis.py  
+python src/06_semifinal_final_analysis.py
+
 Build the SQLite database:
-python src/07_build_database.py  
-Then run the physical-data branch:
+python src/07_build_database.py
+
+Run the physical-data branch:
 python src/30_physical_data_enrichment.py
-python src/31_physical_performance_analysis.py  
-Run the SQL analysis with:
+python src/31_physical_performance_analysis.py
+
+Run the SQL analysis:
 sqlite3 -header -column data/swimming_analysis.db < sql/analysis_queries.sql
+
+Run the interactive dashboard:
+streamlit run app/app.py
+
 Main Outputs
 Key figures include:
 - Paired semifinal-to-final pacing trajectories
 - Semifinal-to-final difference distributions
 - Main pacing result figure
 - Semifinal-to-final mechanism figure
+- Performance trends over time
+- Athlete-level performance visualizations
+
 Key tables include:
 - Descriptive statistics
 - Correlation analysis
@@ -293,10 +379,22 @@ Key tables include:
 - Height-performance GEE models
 - Height-by-sex interaction models
 - Physical-performance correlations
+
+Statistical Limitations
+
+Several limitations should be considered when interpreting the results:
+- The study is observational, so associations should not be interpreted as causal effects.
+- Height and weight data are incomplete, particularly for older competitions.
+- Physical characteristics may not represent measurements taken at the exact date of competition.
+- Athlete observations are repeated across years and rounds, requiring repeated-measures methods.
+- Final time is mathematically determined by the first and second 50 m splits, so using both splits to predict final time would create target leakage.
+- Country representation should not be interpreted as a causal explanatory factor.
 Interpretation
+
 The strongest result in the project is the consistent semifinal-to-final pacing shift.
-Elite swimmers tend to swim the final with a faster opening 50 m and greater second-half slowing than in the semifinal, while still producing a faster overall 100 m time.
-This suggests an important tactical distinction between qualification and medal-round racing in elite sprint freestyle.
+Elite swimmers tend to swim the final with a faster opening 50 m and a larger second-half slowdown than in the semifinal, while still producing a faster overall 100 m performance.
+The statistical analysis shows that this pattern remains meaningful when swimmers are compared with themselves, and the broader modeling framework accounts for repeated observations from the same athlete.
+
 Data Sources
 Primary race data:
 - World Aquatics API
@@ -309,9 +407,13 @@ Technologies
 - SciPy
 - statsmodels
 - matplotlib
+- scikit-learn
 - requests
 - SQLite
 - SQL
+- Streamlit
+- Git
+- GitHub
 
 Author
 Daniel Eichel
