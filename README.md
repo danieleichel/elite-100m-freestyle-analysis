@@ -339,8 +339,15 @@ elite-100m-freestyle-analysis/
 ├── requirements.txt
 └── .gitignore
 
-Reproducible Pipeline
-Run the main analysis in order:
+## Reproducible Pipeline
+
+The project is organized as a reproducible analysis workflow.
+
+### 1. Collect and prepare the race data
+
+Run the main analysis scripts in order:
+
+```bash
 python src/01_collect_data.py
 python src/02_clean_data.py
 python src/03_build_analysis_sample.py
@@ -348,72 +355,76 @@ python src/04_descriptive_analysis.py
 python src/05_pacing_models.py
 python src/06_semifinal_final_analysis.py
 
-Build the SQLite database:
+2. Build the SQLite database
 python src/07_build_database.py
 
-Run the physical-data branch:
+3. Enrich athlete physical characteristics
 python src/30_physical_data_enrichment.py
 python src/31_physical_performance_analysis.py
 
-Run the SQL analysis:
+4. Run the SQL analysis
 sqlite3 -header -column data/swimming_analysis.db < sql/analysis_queries.sql
 
-Run the interactive dashboard:
+5. Launch the interactive dashboard
 streamlit run app/app.py
 
+The public version of the dashboard is available here:
+Open the Elite 100m Freestyle Dashboard
 Main Outputs
-Key figures include:
+The pipeline produces both statistical results and publication-ready visualizations.
+Figures
 - Paired semifinal-to-final pacing trajectories
 - Semifinal-to-final difference distributions
-- Main pacing result figure
+- Main pacing comparison figure
 - Semifinal-to-final mechanism figure
 - Performance trends over time
 - Athlete-level performance visualizations
-
-Key tables include:
+Tables
 - Descriptive statistics
 - Correlation analysis
 - Pacing model summaries
-- Semifinal-final paired results
-- Bootstrap estimates
+- Paired semifinal-to-final results
+- Bootstrap confidence intervals
 - Height-performance GEE models
 - Height-by-sex interaction models
 - Physical-performance correlations
-
 Statistical Limitations
-
-Several limitations should be considered when interpreting the results:
-- The study is observational, so associations should not be interpreted as causal effects.
-- Height and weight data are incomplete, particularly for older competitions.
-- Physical characteristics may not represent measurements taken at the exact date of competition.
-- Athlete observations are repeated across years and rounds, requiring repeated-measures methods.
-- Final time is mathematically determined by the first and second 50 m splits, so using both splits to predict final time would create target leakage.
-- Country representation should not be interpreted as a causal explanatory factor.
+The results should be interpreted with several important limitations in mind:
+- Observational design - the analysis identifies associations and should not be interpreted as causal.
+- Incomplete physical data - height and weight coverage is weaker for older competitions.
+- Timing of physical measurements - athlete height and weight records may not correspond exactly to the date of competition.
+- Repeated athlete observations - swimmers appear multiple times across years and rounds, requiring repeated-measures methods such as GEE and mixed-effects models.
+- Target leakage - final time is mathematically determined by the first and second 50 m splits, so using both splits to predict final time would not represent a meaningful predictive model.
+- Country representation - country should not be interpreted as a causal explanation of performance.
 Interpretation
-
-The strongest result in the project is the consistent semifinal-to-final pacing shift.
-Elite swimmers tend to swim the final with a faster opening 50 m and a larger second-half slowdown than in the semifinal, while still producing a faster overall 100 m performance.
-The statistical analysis shows that this pattern remains meaningful when swimmers are compared with themselves, and the broader modeling framework accounts for repeated observations from the same athlete.
-
+The clearest result is a consistent semifinal-to-final pacing shift.
+Elite swimmers generally produce a faster first 50 m in the final, followed by a larger second-half slowdown, while still recording a faster overall 100 m time.
+The paired design strengthens this finding because the same swimmer is compared across semifinal and final performances within the same competition.
+The broader statistical framework also accounts for repeated observations from the same athletes using repeated-measures methods such as Generalized Estimating Equations (GEE) and mixed-effects models.
 Data Sources
-Primary race data:
+Race Performance Data
 - World Aquatics API
-Physical athlete data:
+Physical Athlete Data
 - Wikidata
 Technologies
+Data Analysis
 - Python
 - pandas
 - NumPy
 - SciPy
 - statsmodels
-- matplotlib
 - scikit-learn
+Visualization and Application
+- matplotlib
+- Streamlit
+Data Engineering
 - requests
 - SQLite
 - SQL
-- Streamlit
+Version Control and Deployment
 - Git
 - GitHub
-
+- Streamlit Community Cloud
 Author
 Daniel Eichel
+Statistics and Data Science Portfolio Project
