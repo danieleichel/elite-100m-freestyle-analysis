@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
 
+from statistical_analysis import render_statistical_analysis
+
 
 # ============================================================
 # PATHS
@@ -20,17 +22,17 @@ DATABASE_FILE = (
     / "swimming_analysis.db"
 )
 
+DATABASE_BUILDER = (
+    PROJECT_ROOT
+    / "src"
+    / "07_build_database.py"
+)
+
 MECHANISM_FIGURE = (
     PROJECT_ROOT
     / "outputs"
     / "figures"
     / "semifinal_final_mechanism.png"
-)
-
-DATABASE_BUILDER = (
-    PROJECT_ROOT
-    / "src"
-    / "07_build_database.py"
 )
 
 
@@ -48,6 +50,7 @@ if not DATABASE_FILE.exists():
         check=True,
         cwd=PROJECT_ROOT
     )
+
 
 # ============================================================
 # PAGE SETTINGS
@@ -67,7 +70,9 @@ st.set_page_config(
 @st.cache_data
 def load_data():
 
-    connection = sqlite3.connect(DATABASE_FILE)
+    connection = sqlite3.connect(
+        DATABASE_FILE
+    )
 
     elite = pd.read_sql_query(
         """
@@ -164,28 +169,34 @@ filtered = elite.copy()
 if sex_filter != "All":
 
     filtered = filtered[
-        filtered["sex"] == sex_filter
+        filtered["sex"]
+        == sex_filter
     ]
 
 if round_filter != "All":
 
     filtered = filtered[
-        filtered["race_round"] == round_filter
+        filtered["race_round"]
+        == round_filter
     ]
 
 filtered = filtered[
-    filtered["competition_year"].between(
+    filtered[
+        "competition_year"
+    ].between(
         year_range[0],
         year_range[1]
     )
 ]
 
 
-# A second dataset used for analyses that require both rounds.
-# This respects sex and year filters but ignores the round filter.
+# This dataset ignores the round filter.
+# It is used for analyses that need both semifinals and finals.
 
 analysis_filtered = elite[
-    elite["competition_year"].between(
+    elite[
+        "competition_year"
+    ].between(
         year_range[0],
         year_range[1]
     )
@@ -194,7 +205,8 @@ analysis_filtered = elite[
 if sex_filter != "All":
 
     analysis_filtered = analysis_filtered[
-        analysis_filtered["sex"] == sex_filter
+        analysis_filtered["sex"]
+        == sex_filter
     ]
 
 
@@ -238,11 +250,13 @@ if sex_filter == "All":
     )
 
     men_filtered = filtered[
-        filtered["sex"] == "Men"
+        filtered["sex"]
+        == "Men"
     ]
 
     women_filtered = filtered[
-        filtered["sex"] == "Women"
+        filtered["sex"]
+        == "Women"
     ]
 
     if len(men_filtered) > 0:
@@ -341,12 +355,13 @@ st.divider()
 # TABS
 # ============================================================
 
-tab1, tab2, tab3, tab4 = st.tabs(
+tab1, tab2, tab3, tab4, tab5 = st.tabs(
     [
         "Overview",
         "Semifinal vs Final",
         "Athlete Explorer",
-        "Physical Characteristics"
+        "Physical Characteristics",
+        "Statistical Analysis"
     ]
 )
 
@@ -360,10 +375,6 @@ with tab1:
     st.header(
         "Performance Overview"
     )
-
-    # ========================================================
-    # PERFORMANCE TABLE
-    # ========================================================
 
     st.subheader(
         "Performance and Pacing by Race Round"
@@ -414,8 +425,7 @@ with tab1:
                 "Second-Half Difference (s)",
             "average_final_time":
                 "Average Final Time (s)",
-            "races":
-                "Races"
+            "races": "Races"
         }
     )
 
@@ -451,7 +461,7 @@ with tab1:
     )
 
     # ========================================================
-    # FINAL TIME BY ROUND
+    # AVERAGE FINAL TIME
     # ========================================================
 
     st.subheader(
@@ -471,13 +481,10 @@ with tab1:
         "Finals"
     ]
 
-    # ========================================================
-    # MEN SUMMARY
-    # ========================================================
-
     men_final_summary = (
         filtered[
-            filtered["sex"] == "Men"
+            filtered["sex"]
+            == "Men"
         ]
         .groupby(
             "race_round",
@@ -510,13 +517,10 @@ with tab1:
             )
         )
 
-    # ========================================================
-    # WOMEN SUMMARY
-    # ========================================================
-
     women_final_summary = (
         filtered[
-            filtered["sex"] == "Women"
+            filtered["sex"]
+            == "Women"
         ]
         .groupby(
             "race_round",
@@ -550,10 +554,6 @@ with tab1:
         )
 
     men_col, women_col = st.columns(2)
-
-    # ========================================================
-    # MEN FINAL TIME FIGURE
-    # ========================================================
 
     with men_col:
 
@@ -641,10 +641,6 @@ with tab1:
             st.info(
                 "No men's observations for the selected filters."
             )
-
-    # ========================================================
-    # WOMEN FINAL TIME FIGURE
-    # ========================================================
 
     with women_col:
 
@@ -734,7 +730,7 @@ with tab1:
             )
 
     # ========================================================
-    # PERFORMANCE TREND OVER TIME
+    # PERFORMANCE TREND
     # ========================================================
 
     st.subheader(
@@ -766,10 +762,6 @@ with tab1:
     )
 
     trend_col1, trend_col2 = st.columns(2)
-
-    # ========================================================
-    # MEN TREND
-    # ========================================================
 
     with trend_col1:
 
@@ -830,10 +822,6 @@ with tab1:
             st.info(
                 "No men's data for the selected filters."
             )
-
-    # ========================================================
-    # WOMEN TREND
-    # ========================================================
 
     with trend_col2:
 
@@ -962,7 +950,6 @@ with tab1:
             numeric_columns
         ].round(2)
 
-    # Bold final-time values
     styled_fastest = fastest.style.map(
         lambda value: (
             "font-weight: bold; "
@@ -986,58 +973,6 @@ with tab1:
             "Second-Half Difference (s)",
             "Competition"
         ],
-        column_config={
-            "Swimmer":
-                st.column_config.TextColumn(
-                    "Swimmer",
-                    width="medium"
-                ),
-            "Final Time (s)":
-                st.column_config.NumberColumn(
-                    "Final Time (s)",
-                    format="%.2f s",
-                    width="small"
-                ),
-            "Sex":
-                st.column_config.TextColumn(
-                    "Sex",
-                    width="small"
-                ),
-            "Year":
-                st.column_config.NumberColumn(
-                    "Year",
-                    format="%d",
-                    width="small"
-                ),
-            "Race Round":
-                st.column_config.TextColumn(
-                    "Race Round",
-                    width="small"
-                ),
-            "First 50 (s)":
-                st.column_config.NumberColumn(
-                    "First 50 (s)",
-                    format="%.2f",
-                    width="small"
-                ),
-            "Second 50 (s)":
-                st.column_config.NumberColumn(
-                    "Second 50 (s)",
-                    format="%.2f",
-                    width="small"
-                ),
-            "Second-Half Difference (s)":
-                st.column_config.NumberColumn(
-                    "Second-Half Difference (s)",
-                    format="%.2f",
-                    width="small"
-                ),
-            "Competition":
-                st.column_config.TextColumn(
-                    "Competition",
-                    width="large"
-                )
-        },
         use_container_width=True,
         hide_index=True
     )
@@ -1059,10 +994,6 @@ with tab2:
         semifinal and final of the same competition.
         """
     )
-
-    # ========================================================
-    # PAIRED DATASET
-    # ========================================================
 
     paired_source = analysis_filtered[
         analysis_filtered[
@@ -1099,11 +1030,13 @@ with tab2:
     )
 
     men_paired = paired[
-        paired["sex"] == "Men"
+        paired["sex"]
+        == "Men"
     ].copy()
 
     women_paired = paired[
-        paired["sex"] == "Women"
+        paired["sex"]
+        == "Women"
     ].copy()
 
     # ========================================================
@@ -1195,7 +1128,7 @@ with tab2:
             )
 
     # ========================================================
-    # PAIRED SEMIFINAL-FINAL COMPARISON
+    # PAIRED FIGURES
     # ========================================================
 
     st.subheader(
@@ -1211,10 +1144,6 @@ with tab2:
     )
 
     paired_col1, paired_col2 = st.columns(2)
-
-    # ========================================================
-    # MEN PAIRED FIGURE
-    # ========================================================
 
     with paired_col1:
 
@@ -1285,10 +1214,6 @@ with tab2:
             st.info(
                 "No paired men's observations."
             )
-
-    # ========================================================
-    # WOMEN PAIRED FIGURE
-    # ========================================================
 
     with paired_col2:
 
@@ -1452,10 +1377,6 @@ with tab3:
             )
             .copy()
         )
-
-        # ====================================================
-        # ATHLETE SUMMARY
-        # ====================================================
 
         c1, c2, c3, c4 = st.columns(4)
 
@@ -1632,10 +1553,6 @@ with tab4:
         .sum()
     )
 
-    # ========================================================
-    # PHYSICAL SUMMARY
-    # ========================================================
-
     c1, c2, c3 = st.columns(3)
 
     c1.metric(
@@ -1716,7 +1633,7 @@ with tab4:
     )
 
     # ========================================================
-    # MERGE PHYSICAL DATA
+    # PHYSICAL DATA MERGE
     # ========================================================
 
     physical_races = elite.merge(
@@ -1783,7 +1700,7 @@ with tab4:
     )
 
     # ========================================================
-    # PHYSICAL INTERPRETATION
+    # INTERPRETATION
     # ========================================================
 
     st.subheader(
@@ -1805,6 +1722,15 @@ with tab4:
         because historical height and weight coverage is incomplete.
         """
     )
+
+
+# ============================================================
+# TAB 5 - STATISTICAL ANALYSIS
+# ============================================================
+
+with tab5:
+
+    render_statistical_analysis()
 
 
 # ============================================================
