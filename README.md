@@ -96,25 +96,25 @@ Additional variables include:
 
 ### 1. Semifinal-to-final pacing changes
 
-Among swimmers who competed in both the semifinal and final of the same competition, second-half pacing deterioration increased in the final.
+Among swimmers who competed in both the semifinal and final of the same competition, second-half pacing deterioration increased in the final. Each pair is one swimmer's semifinal and final at one meet, so a swimmer who made several finals contributes several pairs.
 
 Men:
 
-- Paired swimmers: 136
+- Semifinal–final pairs: 136
 - Semifinal mean percentage dropoff: 8.80%
 - Final mean percentage dropoff: 9.63%
 - Mean increase: 0.82 percentage points
 - Cohen's dz: 0.40
-- 67.6% of swimmers showed greater percentage dropoff in the final
+- 67.6% of pairs showed greater percentage dropoff in the final
 
 Women:
 
-- Paired swimmers: 144
+- Semifinal–final pairs: 144
 - Semifinal mean percentage dropoff: 7.11%
 - Final mean percentage dropoff: 8.02%
 - Mean increase: 0.91 percentage points
 - Cohen's dz: 0.53
-- 70.1% of swimmers showed greater percentage dropoff in the final
+- 70.1% of pairs showed greater percentage dropoff in the final
 
 Bootstrap confidence intervals were fully above zero for both men and women.
 
@@ -243,8 +243,11 @@ Extreme pacing observations are concentrated primarily in preliminary heats and 
 
 - **Observational data.** The semifinal-to-final differences are associations. Finals differ from semifinals in pressure, lane draw, and what is at stake, so the analysis cannot isolate a single cause.
 - **Selected sample.** Only swimmers fast enough to reach a final appear in the paired analysis, so the results describe the world's top sprinters, not swimmers in general.
-- **Incomplete physical data.** Height is available for about two-thirds of athletes, and Wikidata values may not reflect each swimmer's measurements at the time of competition.
+- **Incomplete physical data.** Height is available for about two-thirds of athletes, coverage is lower for older competitions, and Wikidata values may not reflect each swimmer's measurements at the time of competition.
 - **Multiple comparisons.** The height analysis tests several outcomes for each sex, so an individual significant result there should be treated as exploratory.
+- **Repeated athletes.** Many swimmers appear in several meets and rounds, so their races are not independent. This is why the trend models use GEE and mixed-effects models instead of plain OLS.
+- **No split-based prediction of final time.** Final time is the sum of the two 50 m splits, so using both splits to "predict" it would be circular rather than a meaningful model.
+- **Country is not a cause.** Differences between countries should not be read as explaining performance.
 - **Two-split resolution.** Only 50 m splits are available, so finer pacing patterns (for example, the last 15 m) cannot be studied.
 
 ## Physical Data
@@ -429,19 +432,6 @@ The pipeline produces statistical tables, model results, and visualizations for 
 - Height-performance GEE models
 - Height-by-sex interaction models
 - Physical-performance correlations
-
----
-
-## Statistical Limitations
-
-The results should be interpreted with several important limitations in mind:
-
-- **Observational design** - the analysis identifies statistical associations and should not be interpreted as causal.
-- **Incomplete physical data** - height and weight coverage is lower for older competitions.
-- **Timing of physical measurements** - athlete height and weight records may not correspond exactly to the date of competition.
-- **Repeated athlete observations** - swimmers appear multiple times across competitions and race rounds, requiring repeated-measures methods such as GEE and mixed-effects models.
-- **Target leakage** - final time is mathematically determined by the first and second 50 m splits, so using both splits to predict final time would not represent a meaningful predictive model.
-- **Country representation** - country should not be interpreted as a causal explanation of swimming performance.
 
 ---
 
