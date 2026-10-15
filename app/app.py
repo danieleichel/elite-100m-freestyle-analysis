@@ -888,12 +888,18 @@ with tab1:
     # ========================================================
 
     st.subheader(
-        "Fastest Elite Performances"
+        "Fastest Elite Swimmers"
+    )
+
+    st.caption(
+        "Each swimmer's single fastest semifinal or final swim "
+        "for the selected filters."
     )
 
     fastest = (
         filtered[
             [
+                "swimmer_id",
                 "swimmer_name",
                 "final_time",
                 "sex",
@@ -907,6 +913,13 @@ with tab1:
         ]
         .sort_values(
             "final_time"
+        )
+        .drop_duplicates(
+            subset="swimmer_id",
+            keep="first"
+        )
+        .drop(
+            columns="swimmer_id"
         )
         .head(20)
         .copy()
