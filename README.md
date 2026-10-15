@@ -1,10 +1,18 @@
 # Elite 100m Freestyle Performance Analysis
 
-## Live Dashboard
+**[Open the live dashboard](https://elite-100m-freestyle.streamlit.app/)** · Python · SQL · Streamlit · GEE / mixed-effects models
 
-Explore the interactive Streamlit dashboard:
+## Summary
 
-[Open the Elite 100m Freestyle Dashboard](https://elite-100m-freestyle.streamlit.app/)
+Using 4,896 race results from 21 Olympic Games and World Championships (2000–2025), this project asks how elite swimmers change their pacing between the semifinal and the final of the 100m freestyle.
+
+- **Swimmers slow down more in finals.** Among athletes who swam both rounds of the same meet, second-half dropoff rose by 0.82 percentage points for men and 0.91 for women (Cohen's dz 0.40 and 0.53; bootstrap 95% CIs entirely above zero).
+- **The cause is a faster start, not a weaker finish.** In finals, swimmers' first 50 m was 0.13–0.16 s faster while their second 50 m was only 0.04–0.06 s slower, so overall times still improved.
+- **An apparent long-term trend was an artifact.** A simple OLS model suggested men's dropoff declined over 25 years, but the effect disappeared once repeated observations of the same swimmer were modeled with GEE.
+
+![Main result](outputs/figures/main_semifinal_final_result.png)
+
+![Semifinal to final mechanism](outputs/figures/semifinal_final_mechanism.png)
 
 ## Project Overview
 
@@ -231,6 +239,14 @@ World Aquatics race times may appear in either seconds format or minute-second f
 
 Extreme pacing observations are concentrated primarily in preliminary heats and do not enter the primary semifinal/final analysis sample.
 
+## Limitations
+
+- **Observational data.** The semifinal-to-final differences are associations. Finals differ from semifinals in pressure, lane draw, and what is at stake, so the analysis cannot isolate a single cause.
+- **Selected sample.** Only swimmers fast enough to reach a final appear in the paired analysis, so the results describe the world's top sprinters, not swimmers in general.
+- **Incomplete physical data.** Height is available for about two-thirds of athletes, and Wikidata values may not reflect each swimmer's measurements at the time of competition.
+- **Multiple comparisons.** The height analysis tests several outcomes for each sex, so an individual significant result there should be treated as exploratory.
+- **Two-split resolution.** Only 50 m splits are available, so finer pacing patterns (for example, the last 15 m) cannot be studied.
+
 ## Physical Data
 
 Athlete physical characteristics were enriched using Wikidata.
@@ -355,17 +371,21 @@ python src/05_pacing_models.py
 python src/06_semifinal_final_analysis.py
 ```
 
-### 2. Build the SQLite database
-
-```bash
-python src/07_build_database.py
-```
-
-### 3. Enrich athlete physical characteristics
+### 2. Enrich athlete physical characteristics
 
 ```bash
 python src/30_physical_data_enrichment.py
 python src/31_physical_performance_analysis.py
+```
+
+Step 2 queries Wikidata live, so match counts can shift slightly as Wikidata is edited. Uncertain name matches were reviewed by hand; that review is recorded in `data/processed/wikidata_name_match_review.csv` and in the `MANUAL_APPROVED` list inside `30_physical_data_enrichment.py`.
+
+### 3. Build the SQLite database
+
+This step needs `athlete_master_physical_clean.csv`, which step 2 creates.
+
+```bash
+python src/07_build_database.py
 ```
 
 ### 4. Run the SQL analysis
